@@ -1,0 +1,21 @@
+version: '3'
+services:
+
+  traefik:
+    image: traefik # The official Traefik docker image
+    ports:
+      - "443:443"
+      - "80:80" 
+      - "8080:8080" # The Web UI (enabled by --api)
+    volumes:
+      - $PWD/certs:/certs
+      - $PWD/traefik.toml:/etc/traefik/traefik.toml
+      - /var/run/docker.sock:/var/run/docker.sock      
+
+  app:
+    image: nginx
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=app"
+      - "traefik.frontend.rule=Host:localhost"
+      - "traefik.port=80"
